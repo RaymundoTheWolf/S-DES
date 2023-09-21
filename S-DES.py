@@ -224,7 +224,7 @@ class Encryption(object):
     def __init__(self, master=None):
         self.page = None
         self.root = master  # 定义内部变量root
-        self.root.geometry('600x450+900+450')  # 设置窗口大小
+        self.root.geometry('600x480+900+450')  # 设置窗口大小
         self.plainText = ttk.StringVar()
         self.masterKey = ttk.StringVar()
         self.createPage()
@@ -263,7 +263,7 @@ class Encryption(object):
 
         sWelcome = tk.Label(self.page, text='加密界面', height=3, width=200,
                             bg='white',
-                            font=('Arial', 14))
+                            font=('黑体', 14))
         sWelcome.pack()
 
         # 提示词的设计和放置
@@ -289,34 +289,47 @@ class Encryption(object):
                     tk.messagebox.showerror('Invalid Key', '密钥内容错误,请重新输入')
                     return -1
             if flag == 0:
-                text = self.plainText.get()
                 # ASCII版本
-                text = text2binary(text)
+                text = self.plainText.get()
+                plainText_output.delete(0.0, tk.END)
+                plainText_output.insert('insert', '加密结果：\n')
+                for index in text:
+                    binary_text = text2binary(index)
+                    k1 = subkey(key)[0]
+                    k2 = subkey(key)[1]
+                    ip = permutation(binary_text)
+                    fk1 = round_function(ip, k1)
+                    sw = swapper(fk1)
+                    fk2 = round_function(sw, k2)
+                    ip_reverse = permutation_reverse(fk2)
+                    ip_str = ''.join(str(i) for i in ip_reverse)
+                    out = chr(int(ip_str, 2))
+                    plainText_output.insert('insert', out)
             else:
                 text = self.plainText.get()
-
-            if len(text) != 8:
-                tk.messagebox.showerror('Invalid PlainText', '明文错误，请重新输入')
-                return -1
-            for i in range(len(text)):
-                if int(text[i]) != 1 and int(text[i]) != 0:
-                    tk.messagebox.showerror('Invalid Key', '明文错误，请重新输入')
+                if len(text) != 8:
+                    tk.messagebox.showerror('Invalid PlainText', '明文错误，请重新输入')
                     return -1
-            k1 = subkey(key)[0]
-            k2 = subkey(key)[1]
-            ip = permutation(text)
-            fk1 = round_function(ip, k1)
-            sw = swapper(fk1)
-            fk2 = round_function(sw, k2)
-            ip_reverse = permutation_reverse(fk2)
-            plainText_output.delete(0.0, tk.END)
-            plainText_output.insert('insert', '加密结果：')
-            plainText_output.insert('insert', ip_reverse)
+                for i in range(len(text)):
+                    if int(text[i]) != 1 and int(text[i]) != 0:
+                        tk.messagebox.showerror('Invalid Key', '明文错误，请重新输入')
+                        return -1
+                k1 = subkey(key)[0]
+                k2 = subkey(key)[1]
+                ip = permutation(text)
+                fk1 = round_function(ip, k1)
+                sw = swapper(fk1)
+                fk2 = round_function(sw, k2)
+                ip_reverse = permutation_reverse(fk2)
+                ip_str = ''.join(str(i) for i in ip_reverse)
+                plainText_output.delete(0.0, tk.END)
+                plainText_output.insert('insert', '加密结果：')
+                plainText_output.insert('insert', ip_str)
 
         # 返回按钮
         quit_button = ttk.Button(self.page, text='返回', bootstyle=(INFO, OUTLINE), command=self.iBack, width=10)
         quit_button.pack(padx=5, ipady=10)
-        quit_button.place(x=230, y=330)
+        quit_button.place(x=230, y=360)
 
         # “加密”按钮的设计
         iGet = ttk.Button(self.page, text='    加密    ', bootstyle=(INFO, OUTLINE), command=encryption_ans)
@@ -340,6 +353,21 @@ class Decryption(object):
     def createPage(self):
         self.page = Frame(self.root)  # 创建Frame
         self.page.pack(fill='both', ipadx=10, ipady=10, expand=True)
+
+        var = IntVar()
+        var.set(1)  # 默认输入为二进制,用于判断哪个按钮被选中
+        btn_ascii = tk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
+        btn_bin = tk.Radiobutton(self.page, text='Binary', variable=var, value=1)
+        btn_ascii.grid(row=1, column=0, sticky=ttk.W, padx=10, pady=10)
+        btn_ascii.place(x=100, y=80)
+        btn_bin.grid(row=1, column=1, sticky=ttk.W, padx=10, pady=10)
+        btn_bin.place(x=200, y=80)
+
+        def selectbtn():
+            if var.get() == 0:
+                return 0
+            if var.get() == 1:
+                return 1
 
         # 明文，主密钥输入
         cipherText_input = ttk.Entry(self.page, textvariable=self.cipherText)
@@ -368,32 +396,57 @@ class Decryption(object):
 
         # 解密实现函数
         def Decryption_ans():
+            flag = selectbtn()
             key = self.masterKey.get()
             cipherText = self.cipherText.get()
             if len(key) != 10:
                 tk.messagebox.showerror('Invalid Key', '密钥格式错误')
                 return -1
-            if len(cipherText) != 8:
-                tk.messagebox.showerror('Invalid CipherText', '密文格式错误')
-                return -1
-            for i in range(len(key)):
-                if int(key[i]) != 1 and int(key[i]) != 0:
-                    tk.messagebox.showerror('Invalid Key', '密钥内容错误,请重新输入')
+            if flag == 1:
+                if len(cipherText) != 8:
+                    tk.messagebox.showerror('Invalid CipherText', '密文格式错误')
                     return -1
-            for i in range(len(cipherText)):
-                if int(cipherText[i]) != 1 and int(cipherText[i]) != 0:
-                    tk.messagebox.showerror('Invalid Key', '密钥错误，请重新输入')
+                for i in range(len(key)):
+                    if int(key[i]) != 1 and int(key[i]) != 0:
+                        tk.messagebox.showerror('Invalid Key', '密钥内容错误,请重新输入')
+                        return -1
+                for i in range(len(cipherText)):
+                    if int(cipherText[i]) != 1 and int(cipherText[i]) != 0:
+                        tk.messagebox.showerror('Invalid Key', '密钥错误，请重新输入')
+                        return -1
+                k1 = subkey(key)[0]
+                k2 = subkey(key)[1]
+                ip = permutation(cipherText)
+                fk2 = round_function(ip, k2)
+                sw = swapper(fk2)
+                fk1 = round_function(sw, k1)
+                ip_reverse = permutation_reverse(fk1)
+                cipherText_output.delete(0.0, tk.END)
+                cipherText_output.insert('insert', '解密结果：')
+                cipherText_output.insert('insert', ip_reverse)
+            else:
+                binary_cipherText = text2binary(cipherText)
+                if len(binary_cipherText) % 8 != 0:
+                    tk.messagebox.showerror('Invalid CipherText', '密文格式错误')
                     return -1
-            k1 = subkey(key)[0]
-            k2 = subkey(key)[1]
-            ip = permutation(cipherText)
-            fk2 = round_function(ip, k2)
-            sw = swapper(fk2)
-            fk1 = round_function(sw, k1)
-            ip_reverse = permutation_reverse(fk1)
-            cipherText_output.delete(0.0, tk.END)
-            cipherText_output.insert('insert', '解密结果：')
-            cipherText_output.insert('insert', ip_reverse)
+                for i in range(len(key)):
+                    if int(key[i]) != 1 and int(key[i]) != 0:
+                        tk.messagebox.showerror('Invalid Key', '密钥内容错误,请重新输入')
+                        return -1
+                temp_text = [binary_cipherText[i:i + 8] for i in range(0, len(binary_cipherText), 8)]
+                cipherText_output.delete(0.0, tk.END)
+                cipherText_output.insert('insert', '解密结果：\n')
+                for index in temp_text:
+                    k1 = subkey(key)[0]
+                    k2 = subkey(key)[1]
+                    ip = permutation(index)
+                    fk2 = round_function(ip, k2)
+                    sw = swapper(fk2)
+                    fk1 = round_function(sw, k1)
+                    ip_reverse = permutation_reverse(fk1)
+                    ip_str = ''.join(str(i) for i in ip_reverse)
+                    out = chr(int(ip_str, 2))
+                    cipherText_output.insert('insert', out)
 
         # “解密”按钮的设计
         iGet = ttk.Button(self.page, text='    解密    ', bootstyle=(INFO, OUTLINE), command=Decryption_ans)
