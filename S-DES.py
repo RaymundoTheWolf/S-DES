@@ -1,12 +1,13 @@
 import secrets
 import tkinter as tk
 import tkinter.messagebox
-from tkinter import *
 import threading
 import time
-
 import ttkbootstrap as ttk
+
 from ttkbootstrap.constants import *
+from ttkbootstrap import Style
+from tkinter import *
 
 
 # 明文转成二进制
@@ -174,16 +175,17 @@ class Welcome(object):
 
     def createPage(self):
         self.page = Frame(self.root)  # 创建Frame
-        self.page.pack(fill='both', ipadx=10, ipady=10, expand=True)
+        self.page.pack(fill='both', pady=10, expand=True)
         sWelcome = tk.Label(self.page, text='S-DES密码系统', height=3, width=200,
                             bg='white',
-                            font=('黑体', 16))
-        sWelcome.pack(padx=40, pady=40)
-        combobox = ttk.Combobox(self.page, textvariable=self.commandStr)  # 获取用户输入的信息
+                            font=('黑体', 26))
+        sWelcome.pack(padx=40, pady=10)
+
+        combobox = ttk.Combobox(self.page, bootstyle='info', textvariable=self.commandStr)  # 获取用户输入的信息
         combobox['value'] = ('加密', '解密', '获取密钥', 'Crack')  # 组合框显示的选项
         combobox.current(0)
         combobox.pack(padx=5, pady=10)
-        combobox.place(x=220, y=150)  # 组合框的位置和大小
+        combobox.place(x=250, y=170)  # 组合框的位置和大小
 
         getStr = ['加密', '解密', '获取密钥', 'Crack']
 
@@ -211,13 +213,13 @@ class Welcome(object):
             else:
                 tk.messagebox.showerror('错误', '不提供该类型服务')
 
-        func = tk.Label(self.page, text='操作类型', width=9, height=2, font=('黑体', 10), bg='white')
-        func.place(x=100, y=145)
+        func = tk.Label(self.page, text='选择操作类型', width=14, height=2, font=('黑体', 13), bg='white')
+        func.place(x=100, y=165)
 
         # “查询”按钮的设计
-        iGet1 = ttk.Button(self.page, text='    操作    ', bootstyle=(INFO, OUTLINE), command=get_command)
+        iGet1 = ttk.Button(self.page, text='    确定    ', bootstyle='primary.TButton', command=get_command)
         iGet1.pack(padx=5, ipady=10)
-        iGet1.place(x=250, y=240)  # 设计按钮的样式，大小和位置
+        iGet1.place(x=250, y=280)
 
 
 class Encryption(object):
@@ -237,50 +239,16 @@ class Encryption(object):
         self.page = Frame(self.root)  # 创建Frame
         self.page.pack(fill='both', ipadx=10, ipady=10, expand=True)
 
-        var = IntVar()
-        var.set(1)  # 默认输入为二进制,用于判断哪个按钮被选中
-        btn_ascii = tk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
-        btn_bin = tk.Radiobutton(self.page, text='Binary', variable=var, value=1)
-        btn_ascii.grid(row=1, column=0, sticky=ttk.W, padx=10, pady=10)
-        btn_ascii.place(x=100, y=80)
-        btn_bin.grid(row=1, column=1, sticky=ttk.W, padx=10, pady=10)
-        btn_bin.place(x=200, y=80)
-
-        def selectbtn():
+        def select_button():
             if var.get() == 0:
                 return 0
             if var.get() == 1:
                 return 1
 
-        # 明文，主密钥输入
-        plainText_input = ttk.Entry(self.page, textvariable=self.plainText)
-        plainText_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
-        plainText_input.place(x=200, y=110)
-
-        masterKey_input = ttk.Entry(self.page, textvariable=self.masterKey, show='*')
-        masterKey_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
-        masterKey_input.place(x=200, y=150)
-
-        sWelcome = tk.Label(self.page, text='加密界面', height=3, width=200,
-                            bg='white',
-                            font=('黑体', 14))
-        sWelcome.pack()
-
-        # 提示词的设计和放置
-        func1 = tk.Label(self.page, text='明文', width=9, height=2, font=('黑体', 10), bg='white')
-        func1.place(x=80, y=105)
-        func2 = tk.Label(self.page, text='主密钥', width=9, height=2, font=('黑体', 10), bg='white')
-        func2.place(x=80, y=145)
-
-        # 密文输出
-        plainText_output = ttk.Text(self.page, height=5, width=30)
-        plainText_output.pack(padx=10, pady=150)
-        plainText_output.insert('insert', '加密结果：')
-
         def encryption_ans():
             # 这里设置检查，防止用户不合理输入
             key = self.masterKey.get()
-            flag = selectbtn()
+            flag = select_button()
             if len(key) != 10:
                 tk.messagebox.showerror('Invalid Key', '密钥长度错误，请重新输入')
                 return -1
@@ -326,15 +294,50 @@ class Encryption(object):
                 plainText_output.insert('insert', '加密结果：')
                 plainText_output.insert('insert', ip_str)
 
-        # 返回按钮
-        quit_button = ttk.Button(self.page, text='返回', bootstyle=(INFO, OUTLINE), command=self.iBack, width=10)
-        quit_button.pack(padx=5, ipady=10)
-        quit_button.place(x=230, y=360)
+        # 默认输入为二进制,用于判断哪个按钮被选中
+        var = IntVar()
+        var.set(1)
+        btn_ascii = ttk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
+        btn_bin = ttk.Radiobutton(self.page, text='Binary', variable=var, value=1)
+        btn_ascii.grid(row=1, column=0, sticky=ttk.W, padx=10, pady=10)
+        btn_ascii.place(x=170, y=100)
+        btn_bin.grid(row=1, column=1, sticky=ttk.W, padx=10, pady=10)
+        btn_bin.place(x=270, y=100)
 
-        # “加密”按钮的设计
-        iGet = ttk.Button(self.page, text='    加密    ', bootstyle=(INFO, OUTLINE), command=encryption_ans)
+        # 明文，主密钥输入
+        plainText_input = ttk.Entry(self.page, textvariable=self.plainText)
+        plainText_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
+        plainText_input.place(x=260, y=145)
+
+        masterKey_input = ttk.Entry(self.page, textvariable=self.masterKey, show='*')
+        masterKey_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
+        masterKey_input.place(x=260, y=185)
+
+        sWelcome = tk.Label(self.page, text='加密界面', height=3, width=200,
+                            bg='white',
+                            font=('黑体', 20))
+        sWelcome.pack()
+
+        # 显示输入类别
+        func1 = tk.Label(self.page, text='明文', width=9, height=3, font=('黑体', 13), bg='white')
+        func1.place(x=155, y=130)
+        func2 = tk.Label(self.page, text='主密钥', width=9, height=3, font=('黑体', 13), bg='white')
+        func2.place(x=155, y=170)
+
+        # 密文输出
+        plainText_output = ttk.Text(self.page, height=5, width=30)
+        plainText_output.pack(padx=10, pady=150)
+        plainText_output.insert('insert', '加密结果：')
+
+        # "返回"按钮
+        quit_button = ttk.Button(self.page, text='返回', bootstyle='primary.TButton', command=self.iBack, width=7)
+        quit_button.pack(padx=5, ipady=10)
+        quit_button.place(x=320, y=360)
+
+        # "加密"按钮
+        iGet = ttk.Button(self.page, text='加密', bootstyle='primary.TButton', command=encryption_ans, width=7)
         iGet.pack(padx=5, ipady=10)
-        iGet.place(x=460, y=130)  # 设计按钮的样式，大小和位置
+        iGet.place(x=200, y=360)
 
 
 class Decryption(object):
@@ -354,49 +357,15 @@ class Decryption(object):
         self.page = Frame(self.root)  # 创建Frame
         self.page.pack(fill='both', ipadx=10, ipady=10, expand=True)
 
-        var = IntVar()
-        var.set(1)  # 默认输入为二进制,用于判断哪个按钮被选中
-        btn_ascii = tk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
-        btn_bin = tk.Radiobutton(self.page, text='Binary', variable=var, value=1)
-        btn_ascii.grid(row=1, column=0, sticky=ttk.W, padx=10, pady=10)
-        btn_ascii.place(x=100, y=80)
-        btn_bin.grid(row=1, column=1, sticky=ttk.W, padx=10, pady=10)
-        btn_bin.place(x=200, y=80)
-
-        def selectbtn():
+        def select_button():
             if var.get() == 0:
                 return 0
             if var.get() == 1:
                 return 1
 
-        # 明文，主密钥输入
-        cipherText_input = ttk.Entry(self.page, textvariable=self.cipherText)
-        cipherText_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
-        cipherText_input.place(x=200, y=110)
-
-        masterKey_input = ttk.Entry(self.page, textvariable=self.masterKey, show='*')
-        masterKey_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
-        masterKey_input.place(x=200, y=150)
-
-        sWelcome = tk.Label(self.page, text='解密界面', height=3, width=200,
-                            bg='white',
-                            font=('黑体', 14))
-        sWelcome.pack()
-
-        # 提示词的设计和放置
-        func1 = tk.Label(self.page, text='密文', width=9, height=2, font=('黑体', 10), bg='white')
-        func1.place(x=80, y=105)
-        func2 = tk.Label(self.page, text='主密钥', width=9, height=2, font=('黑体', 10), bg='white')
-        func2.place(x=80, y=145)
-
-        # 密文输出
-        cipherText_output = ttk.Text(self.page, height=5, width=30)
-        cipherText_output.pack(padx=10, pady=150)
-        cipherText_output.insert('insert', '解密结果：')
-
         # 解密实现函数
-        def Decryption_ans():
-            flag = selectbtn()
+        def decryption_ans():
+            flag = select_button()
             key = self.masterKey.get()
             cipherText = self.cipherText.get()
             if len(key) != 10:
@@ -448,15 +417,49 @@ class Decryption(object):
                     out = chr(int(ip_str, 2))
                     cipherText_output.insert('insert', out)
 
-        # “解密”按钮的设计
-        iGet = ttk.Button(self.page, text='    解密    ', bootstyle=(INFO, OUTLINE), command=Decryption_ans)
-        iGet.pack(padx=5, ipady=10)
-        iGet.place(x=460, y=130)  # 设计按钮的样式，大小和位置
+        var = IntVar()
+        var.set(1)  # 默认输入为二进制,用于判断哪个按钮被选中
+        btn_ascii = ttk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
+        btn_bin = ttk.Radiobutton(self.page, text='Binary', variable=var, value=1)
+        btn_ascii.grid(row=1, column=0, sticky=ttk.W, padx=10, pady=10)
+        btn_ascii.place(x=170, y=100)
+        btn_bin.grid(row=1, column=1, sticky=ttk.W, padx=10, pady=10)
+        btn_bin.place(x=270, y=100)
 
-        # 返回按钮
-        quit_button = ttk.Button(self.page, text='返回', bootstyle=(INFO, OUTLINE), command=self.iBack, width=10)
+        # 明文，主密钥输入
+        cipherText_input = ttk.Entry(self.page, textvariable=self.cipherText)
+        cipherText_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
+        cipherText_input.place(x=260, y=145)
+
+        masterKey_input = ttk.Entry(self.page, textvariable=self.masterKey, show='*')
+        masterKey_input.grid(row=15, column=1, sticky=ttk.W, padx=10, pady=10)
+        masterKey_input.place(x=260, y=185)
+
+        sWelcome = tk.Label(self.page, text='解密界面', height=3, width=200,
+                            bg='white',
+                            font=('黑体', 20))
+        sWelcome.pack()
+
+        # 显示输入类别
+        func1 = tk.Label(self.page, text='密文', width=9, height=3, font=('黑体', 13), bg='white')
+        func1.place(x=155, y=130)
+        func2 = tk.Label(self.page, text='主密钥', width=9, height=3, font=('黑体', 13), bg='white')
+        func2.place(x=155, y=170)
+
+        # 密文输出
+        cipherText_output = ttk.Text(self.page, height=5, width=30)
+        cipherText_output.pack(padx=10, pady=150)
+        cipherText_output.insert('insert', '解密结果：')
+
+        # "解密"按钮
+        iGet = ttk.Button(self.page, text='解密', bootstyle='primary.TButton', command=decryption_ans, width=7)
+        iGet.pack(padx=5, ipady=10)
+        iGet.place(x=200, y=360)  # 设计按钮的样式，大小和位置
+
+        # "返回"按钮
+        quit_button = ttk.Button(self.page, text='返回', bootstyle='primary.TButton', command=self.iBack, width=7)
         quit_button.pack(padx=5, ipady=10)
-        quit_button.place(x=230, y=330)
+        quit_button.place(x=320, y=360)
 
 
 class Crack(object):
@@ -491,10 +494,10 @@ class Crack(object):
                             font=('黑体', 14))
         sWelcome.pack()
 
-        # 提示词的设计和放置
-        func1 = tk.Label(self.page, text='明文', width=9, height=2, font=('黑体', 10), bg='white')
+        # 显示输入类别
+        func1 = tk.Label(self.page, text='明文', width=9, height=3, font=('黑体', 10), bg='white')
         func1.place(x=80, y=105)
-        func2 = tk.Label(self.page, text='密文', width=9, height=2, font=('黑体', 10), bg='white')
+        func2 = tk.Label(self.page, text='密文', width=9, height=3, font=('黑体', 10), bg='white')
         func2.place(x=80, y=145)
 
         #
@@ -557,17 +560,18 @@ class Crack(object):
             key_output.insert('insert', "运行时间: " + running_time + "s" + "\n")
 
         # “解密”按钮的设计
-        iGet = ttk.Button(self.page, text='    解密    ', bootstyle=(INFO, OUTLINE), command=crack_func)
+        iGet = ttk.Button(self.page, text='    解密    ', bootstyle='primary.TButton', command=crack_func)
         iGet.pack(padx=5, ipady=10)
         iGet.place(x=460, y=130)  # 设计按钮的样式，大小和位置
 
         # 返回按钮
-        quit_button = ttk.Button(self.page, text='返回', bootstyle=(INFO, OUTLINE), command=self.iBack, width=10)
+        quit_button = ttk.Button(self.page, text='返回', bootstyle='primary.TButton', command=self.iBack, width=10)
         quit_button.pack(padx=5, ipady=10)
         quit_button.place(x=230, y=430)
 
 
 win = ttk.Window()
+style = Style(theme='yeti')
 win.geometry('600x400+900+450')
 win.title('S-DES')  # 窗口名称
 win.resizable(False, False)  # 禁止用户自行调节窗口大小
