@@ -347,6 +347,7 @@ class Decryption(object):
         self.root.geometry('820x660+900+450')  # 设置窗口大小
         self.cipherText = ttk.StringVar()
         self.masterKey = ttk.StringVar()
+        self.ansCheck = []
         self.createPage()
 
     def iBack(self):
@@ -477,19 +478,53 @@ class Crack(object):
         self.page = Frame(self.root)  # 创建Frame
         self.page.pack(fill='both', ipadx=10, ipady=10, expand=True)
 
-        def encryption_ans_check(text, key):
-            k1 = subkey(key)[0]
-            k2 = subkey(key)[1]
-            ip = permutation(text)
-            fk1 = round_function(ip, k1)
-            sw = swapper(fk1)
-            fk2 = round_function(sw, k2)
-            ip_reverse = permutation_reverse(fk2)
-            return ip_reverse
+        def select_button():
+            if var.get() == 0:
+                return 0
+            if var.get() == 1:
+                return 1
+
+        def group_string(s):
+            ans = []
+            # 获取字符串长度
+            length = len(s)
+            # 如果字符串长度不能被8整除，在字符串末尾补0
+            if length % 8 != 0:
+                s += '0' * (8 - length % 8)
+                # 每8个字符拆分为一组，记录到列表中
+            groups = [s[i:i + 8] for i in range(0, length, 8)]
+            return groups
+
+        def encryption_ans_check(text, key, selection):
+            if selection == 1:
+                k1 = subkey(key)[0]
+                k2 = subkey(key)[1]
+                ip = permutation(text)
+                fk1 = round_function(ip, k1)
+                sw = swapper(fk1)
+                fk2 = round_function(sw, k2)
+                ip_reverse = permutation_reverse(fk2)
+                return ip_reverse
+            else:
+                result = ''
+                for letter in text:
+                    binary_text = text2binary(letter)
+                    k1 = subkey(key)[0]
+                    k2 = subkey(key)[1]
+                    ip = permutation(binary_text)
+                    fk1 = round_function(ip, k1)
+                    sw = swapper(fk1)
+                    fk2 = round_function(sw, k2)
+                    ip_reverse = permutation_reverse(fk2)
+                    ip_str = ''.join(str(i) for i in ip_reverse)
+                    out = chr(int(ip_str, 2))
+                    result += out
+                return result
 
         # 破解实现函数
-        def worker(num, Tid, iText, iCipher, ans):
+        def worker(num, Tid, iText, iCipher, ans, selection):
             print(f"Thread {Tid} is starting...")
+            # 为了简便线程数量需要为2的n次方
             if not is_power_of_two(num):
                 return -1
 
@@ -497,7 +532,7 @@ class Crack(object):
             flag = 0
             for index in range(Tid * scale, (Tid + 1) * scale):
                 temp_key = str(bin(index)[2:].zfill(10))
-                temp_ans = encryption_ans_check(iText, temp_key)
+                temp_ans = encryption_ans_check(iText, temp_key, selection)
                 solved_ans = ''.join(str(i) for i in temp_ans)
                 if solved_ans == iCipher:
                     ans.append(temp_key)
@@ -514,7 +549,8 @@ class Crack(object):
             for i in range(16):
                 thread_id = i
                 t = threading.Thread(target=worker,
-                                     args=(16, thread_id, self.plainText.get(), self.cipherText.get(), self.ans))
+                                     args=(16, thread_id, self.plainText.get(), self.cipherText.get(), self.ans,
+                                           select_button()))
                 t.start()
                 threads.append(t)
 
@@ -536,30 +572,38 @@ class Crack(object):
                             font=('黑体', 20))
         sWelcome.pack()
 
+        # 默认输入为二进制,用于判断哪个按钮被选中
+        var = IntVar()
+        var.set(1)
+        btn_ascii = ttk.Radiobutton(self.page, text='ASCII', variable=var, value=0)
+        btn_ascii.place(relx=0.32, rely=0.2)
+        btn_bin = ttk.Radiobutton(self.page, text='Binary', variable=var, value=1)
+        btn_bin.place(relx=0.5, rely=0.2)
+
         # 标签显示输入类别
         ciphertext_label = tk.Label(self.page, text='明文', width=9, height=3, font=('黑体', 13), bg='white')
-        ciphertext_label.place(relx=0.28, rely=0.18)
+        ciphertext_label.place(relx=0.28, rely=0.24)
         plaintext_label = tk.Label(self.page, text='密文', width=9, height=3, font=('黑体', 13), bg='white')
-        plaintext_label.place(relx=0.28, rely=0.26)
+        plaintext_label.place(relx=0.28, rely=0.32)
 
         # 明文，密文输入栏
         plainText_input = ttk.Entry(self.page, textvariable=self.plainText)
-        plainText_input.place(relx=0.43, rely=0.21)
+        plainText_input.place(relx=0.43, rely=0.26)
         cipherText_input = ttk.Entry(self.page, textvariable=self.cipherText)
-        cipherText_input.place(relx=0.43, rely=0.29)
+        cipherText_input.place(relx=0.43, rely=0.34)
 
         # 输出可能的密钥
         key_output = ttk.Text(self.page, height=9, width=30)
-        key_output.place(relx=0.32, rely=0.42)
+        key_output.place(relx=0.32, rely=0.45)
         key_output.insert('insert', '破解结果：')
 
         # 返回按钮
         quit_button = ttk.Button(self.page, text='返回', bootstyle='primary.TButton', command=self.iBack, width=7)
-        quit_button.place(relx=0.35, rely=0.8)
+        quit_button.place(relx=0.35, rely=0.83)
 
         # "破解"按钮
         crack_button = ttk.Button(self.page, text='破解', bootstyle='success.TButton', command=crack_func, width=7)
-        crack_button.place(relx=0.52, rely=0.8)
+        crack_button.place(relx=0.52, rely=0.83)
 
 
 win = ttk.Window()
