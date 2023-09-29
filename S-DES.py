@@ -484,6 +484,7 @@ class Crack(object):
             if var.get() == 1:
                 return 1
 
+        '''
         def group_string(s):
             ans = []
             # 获取字符串长度
@@ -494,6 +495,7 @@ class Crack(object):
                 # 每8个字符拆分为一组，记录到列表中
             groups = [s[i:i + 8] for i in range(0, length, 8)]
             return groups
+        '''
 
         def encryption_ans_check(text, key, selection):
             if selection == 1:
