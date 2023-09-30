@@ -12,7 +12,7 @@
 
 - 可以选择不同的功能，包括**加密，解密，获取密钥，破解功能**
 
-   ![image-20230930003426800](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930003426800.png)
+   ![main_interface](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/main%20interface.png)
 
 ### 加密操作
 
@@ -20,11 +20,11 @@
 
 -  二进制风格
 
-    ![image-20230930003545921](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930003545921.png)
+    ![encryption_binary](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/encryption_binary.png)
 
 - ASCII风格
 
-   ![image-20230930003606842](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930003606842.png)
+   ![encryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/encryption_ascii.png)
 
 ### 解密操作
 
@@ -32,11 +32,11 @@
 
 - 二进制风格
 
-   ![image-20230930003647817](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930003647817.png)
+   ![decryption_binary](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/decryption_binary.png)
 
 - ASCII风格
 
-   ![image-20230930003718493](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930003718493.png)
+   ![decryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/decryption_ascii.png)
 
 ### 获取密钥操作
 
@@ -50,7 +50,7 @@ def generate_key(length):
     return key_bin
 ```
 
- ![image-20230930004113596](C:\Users\rickt\AppData\Roaming\Typora\typora-user-images\image-20230930004113596.png)
+ ![generate_key](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/generate_key.png)
 
 ### 破解操作
 
@@ -110,11 +110,11 @@ def worker(num, Tid, iText, iCipher, ans, selection):
 
   - 二进制风格
 
-     ![crack](D:\Study Stuff\大三\crack.gif)
+     ![crack](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack.gif)
 
   - ASCII风格
 
-     ![crack_ascii](D:\Study Stuff\大三\crack_ascii.gif)
+     ![crack_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack_ascii.gif)
 
 
 
@@ -158,9 +158,9 @@ if flag == 0:
 
 ### 测试结果
 
-  ![switch](D:\Study Stuff\大三\switch.gif)
+  ![switch](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/switch.gif)
 
- ![switch_decrypt](D:\Study Stuff\大三\switch_decrypt.gif)
+ ![switch_decrypt](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/switch_decrypt.gif)
 
 
 
@@ -170,7 +170,7 @@ if flag == 0:
 
 ### 测试结果
 
- ![crack_test](D:\Study Stuff\大三\crack_test.gif)
+ ![crack_test](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack_test.gif)
 
 
 
