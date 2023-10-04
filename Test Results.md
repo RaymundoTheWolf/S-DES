@@ -36,7 +36,7 @@
 
 - ASCII风格
 
-   ![decryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/decryption_ascii.png)
+   ![decryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/encryption_ascii.png)
 
 ### 获取密钥操作
 
@@ -110,7 +110,7 @@ def worker(num, Tid, iText, iCipher, ans, selection):
 
   - 二进制风格
 
-     ![crack](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack.gif)
+     ![crack](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack_binary.gif)
 
   - ASCII风格
 
@@ -123,7 +123,24 @@ def worker(num, Tid, iText, iCipher, ans, selection):
 - 考虑到是**算法标准**，所有人在编写程序的时候需要使用相同算法流程和转换单元(P-Box、S-Box等)，以保证算法和程序在异构的系统或平台上都可以正常运行
 - 设有A和B两组位同学(选择相同的密钥K)；则A、B组同学编写的程序对明文P进行加密得到相同的密文C；或者B组同学接收到A组程序加密的密文C，使用B组程序进行解密可得到与A相同的P
 
-### A组测试：
+- ASCII风格
+     - **A组**
+
+     ![cross_test_ascii_A](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/cross_test_ascii_A.jpg)
+  
+     - **B组**
+
+     ![cross_test_ascii_B](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/cross_test_ascii_B.png)
+  
+
+- 二进制风格
+     - **A组**
+ 
+     ![cross_test_binary_A](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/cross_test_binary_A.jpg)
+  
+     - **B组**
+      
+     ![cross_test_binary_B](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/cross_test_binary_B.png)
 
 
 
@@ -158,9 +175,9 @@ if flag == 0:
 
 ### 测试结果
 
-  ![switch](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/switch.gif)
+  ![switch](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/encryption_ascii.png)
 
- ![switch_decrypt](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/switch_decrypt.gif)
+ ![switch_decrypt](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/decryption_ascii.png)
 
 
 
@@ -170,7 +187,7 @@ if flag == 0:
 
 ### 测试结果
 
- ![crack_test](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack_test.gif)
+ ![crack_test](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/crack_binary.gif)
 
 
 
@@ -180,15 +197,15 @@ if flag == 0:
 
 |   明文   | 密文     | 加密使用的密钥 |   破解的密钥   | 破解时间 |
 | :------: | -------- | :------------: | :------------: | :------: |
-|  101010  | 10011011 |   1111100000   | **1111100000** |  0.042s  |
+| 10101010 | 00011011 |   1111100000   | **1111100000** |  0.042s  |
+|          |          |                |   1000011001   |          |
 |          |          |                |   1011100000   |          |
-| 10011100 | 11100000 |   1001010110   |   0010111011   |  0.042s  |
-|          |          |                |   0110111011   |          |
+|          |          |                |   1100011001   |          |
+| 10011100 | 11110100 |   1001010110   |   1000011100   |  0.042s  |
+|          |          |                |   1100011100   |          |
 |          |          |                | **1001010110** |          |
-|          |          |                |   1010101101   |          |
 |          |          |                |   1101010110   |          |
-|          |          |                |   1110101101   |          |
-|  s-des   | ¨        |   0100110101   |   0000110101   |  0.204s  |
+|  s-des   | Ë¨     |   0100110101   |   0000110101   |  0.214s  |
 |          |          |                | **0100110101** |          |
 
 
