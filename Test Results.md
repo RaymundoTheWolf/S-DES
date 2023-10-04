@@ -36,7 +36,7 @@
 
 - ASCII风格
 
-   ![decryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/encryption_ascii.png)
+   ![decryption_ascii](https://github.com/RaymundoTheWolf/S-DES/blob/main/test%20results%20gifs/decryption_ascii.png)
 
 ### 获取密钥操作
 
