@@ -89,48 +89,46 @@ def binary(a):
 
 
 # 轮函数，输入的值分别为处理后的明文和子密钥
-def round_function(originKey, k):
-    # 将输入的内容分成L和R，其中origin_split是L
-    origin = []
-    origin_split = []
+def round_function(Text, k):
+    right = []
+    left = []
     for index in range(4):
-        origin_split.append(int(originKey[index]))
+        left.append(int(Text[index]))
     for index in range(4):
-        origin.append(int(originKey[index + 4]))
+        right.append(int(Text[index + 4]))
     EPBox = [4, 1, 2, 3, 2, 3, 4, 1]
-    SBox01 = [(1, 0, 3, 0), (3, 2, 1, 0), (3, 0, 1, 2), (2, 1, 0, 3)]
+    SBox01 = [(1, 0, 3, 2), (3, 2, 1, 0), (0, 2, 1, 3), (3, 1, 0, 2)]
     SBox02 = [(0, 1, 2, 3), (2, 3, 1, 0), (3, 0, 1, 2), (2, 1, 0, 3)]
     SPBox = [2, 4, 3, 1]
-    key_right = []
+    expend_right = []
     # 对R半边进行拓展
     for index in range(8):
-        key_right.append(int(origin[EPBox[index] - 1]))
-    # 进行轮转置换
+        expend_right.append(int(right[EPBox[index] - 1]))
+    # 进行异或
     for index in range(8):
-        if k[index] == key_right[index]:
-            key_right[index] = 0
+        if int(k[index]) == expend_right[index]:
+            expend_right[index] = 0
         else:
-            key_right[index] = 1
+            expend_right[index] = 1
     # 找到在矩阵中对应位置
-    flag01 = key_right[0] * 2 + key_right[3] * 1
-    flag02 = key_right[1] * 2 + key_right[2] * 1
-    flag03 = key_right[4] * 2 + key_right[7] * 1
-    flag04 = key_right[5] * 2 + key_right[6] * 1
-    key_right01 = SBox01[flag01][flag02]
-    key_right02 = SBox02[flag03][flag04]
-    ans = binary(key_right01) + binary(key_right02)
+    flag01 = expend_right[0] * 2 + expend_right[3] * 1
+    flag02 = expend_right[1] * 2 + expend_right[2] * 1
+    flag03 = expend_right[4] * 2 + expend_right[7] * 1
+    flag04 = expend_right[5] * 2 + expend_right[6] * 1
+    expend_right01 = SBox01[flag01][flag02]
+    expend_right02 = SBox02[flag03][flag04]
+    ans = binary(expend_right01) + binary(expend_right02)
     key_left = []
     # 轮转
     for index in range(4):
         key_left.append(ans[SPBox[index] - 1])
     # 异或
     for index in range(4):
-        if key_left[index] == origin_split[index]:
+        if key_left[index] == left[index]:
             key_left[index] = 0
         else:
             key_left[index] = 1
-    # 左右合并
-    return key_left + origin
+    return key_left + right
 
 
 # 左右互换SW，输入一段8-bit的密文，函数会将其左右4-bit的内容调换
